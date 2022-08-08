@@ -2574,6 +2574,21 @@ void RendererSceneCull::render_camera(const Ref<RenderSceneBuffers> &p_render_bu
 
 	RID environment = _render_get_environment(p_camera, p_scenario);
 
+	if (!environment_blend_settings.is_empty()) {
+		Variant result;
+		Callable::CallError ce;
+
+		const Variant id = environment.get_id();
+		const Variant *arg = &id;
+
+		environment_blend_settings.get(0).blender.callp(&arg, 1, result, ce);
+
+		if (result != RID()) {
+			environment = result;
+			environment_blend_settings.remove_at(0);
+		}
+	}
+
 	RENDER_TIMESTAMP("Update Occlusion Buffer")
 	// For now just cull on the first camera
 	RendererSceneOcclusionCull::get_singleton()->buffer_update(p_viewport, camera_data.main_transform, camera_data.main_projection, camera_data.is_orthogonal);
@@ -3337,6 +3352,18 @@ RID RendererSceneCull::_render_get_environment(RID p_camera, RID p_scenario) {
 }
 
 void RendererSceneCull::render_empty_scene(const Ref<RenderSceneBuffers> &p_render_buffers, RID p_scenario, RID p_shadow_atlas) {
+void RendererSceneCull::environment_add_blender(const Callable &p_blender, const int p_priority, const real_t p_volume) {
+	ERR_FAIL_COND(p_blender.is_null());
+
+	EnvironmentBlendSettings settings;
+	settings.blender = p_blender;
+	settings.priority = p_priority;
+	settings.volume = p_volume;
+
+	environment_blend_settings.append(settings);
+}
+
+void RendererSceneCull::render_empty_scene(RID p_render_buffers, RID p_scenario, RID p_shadow_atlas) {
 #ifndef _3D_DISABLED
 	Scenario *scenario = scenario_owner.get_or_null(p_scenario);
 

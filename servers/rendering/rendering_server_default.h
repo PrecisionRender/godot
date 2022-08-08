@@ -662,6 +662,10 @@ public:
 #define ServerName RenderingMethod
 #define server_name RSG::scene
 
+
+	FUNC3(environment_add_blender, const Callable &, const int, const real_t)
+
+	FUNC2(directional_shadow_atlas_set_size, int, bool)
 	FUNC1(voxel_gi_set_quality, VoxelGIQuality)
 
 	/* SKY API */

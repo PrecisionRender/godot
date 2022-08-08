@@ -106,7 +106,6 @@ public:
 	virtual void camera_set_camera_attributes(RID p_camera, RID p_attributes);
 	virtual void camera_set_use_vertical_aspect(RID p_camera, bool p_enable);
 	virtual bool is_camera(RID p_camera) const;
-
 	/* OCCLUDER API */
 
 	virtual RID occluder_allocate();
@@ -1074,6 +1073,17 @@ public:
 	//pass to scene render
 
 	/* ENVIRONMENT API */
+
+	struct EnvironmentBlendSettings
+	{
+		Callable blender;
+		int priority;
+		real_t volume;
+	};
+
+	Vector<EnvironmentBlendSettings> environment_blend_settings;
+
+	virtual void environment_add_blender(const Callable &p_blender, const int p_priority, const real_t p_volume);
 
 #ifdef PASSBASE
 #undef PASSBASE

@@ -996,6 +996,8 @@ public:
 
 	virtual RID environment_create() = 0;
 
+	virtual void environment_add_blender(const Callable &p_blender, const int p_priority, const real_t p_volume) = 0;
+
 	enum EnvironmentBG {
 		ENV_BG_CLEAR_COLOR,
 		ENV_BG_COLOR,

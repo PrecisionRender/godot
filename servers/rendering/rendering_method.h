@@ -122,6 +122,8 @@ public:
 	virtual RID environment_allocate() = 0;
 	virtual void environment_initialize(RID p_rid) = 0;
 
+	virtual void environment_add_blender(const Callable &p_blender, const int p_priority, const real_t p_volume) = 0;
+
 	// Background
 	virtual void environment_set_background(RID p_env, RS::EnvironmentBG p_bg) = 0;
 	virtual void environment_set_sky(RID p_env, RID p_sky) = 0;

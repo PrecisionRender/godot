@@ -35,6 +35,7 @@
 #include "scene/resources/sky.h"
 #include "scene/resources/texture.h"
 
+
 class Environment : public Resource {
 	GDCLASS(Environment, Resource);
 
@@ -429,5 +430,60 @@ VARIANT_ENUM_CAST(Environment::ReflectionSource)
 VARIANT_ENUM_CAST(Environment::ToneMapper)
 VARIANT_ENUM_CAST(Environment::SDFGIYScale)
 VARIANT_ENUM_CAST(Environment::GlowBlendMode)
+
+
+class EnvironmentBlender : public Object
+{
+	GDCLASS(EnvironmentBlender, Object)
+
+	static inline Variant _blend_variant(const Variant &a, const Variant &b, const real_t &weight) {
+		return weight > 0.5 ? b : a;
+	}
+
+	static inline bool _blend_bool(const bool &a, const bool &b, const real_t &weight) {
+		return weight > 0.5 ? b : a;
+	}
+
+	static inline real_t _blend_float(const real_t &a, const real_t &b, const real_t &weight)
+	{
+		return Math::lerp(a, b, weight);
+	}
+
+	static inline int _blend_int(const int &a, const int &b, const real_t &weight)
+	{
+		return weight > 0.5 ? b : a;
+	}
+
+	static inline Vector3 _blend_vector3(const Vector3 &a, const Vector3 &b, const real_t &weight) {
+		return a.lerp(b, weight);
+	}
+
+	static inline Color _blend_color(const Color &a, const Color &b, const real_t &weight) {
+		return a.lerp(b, weight);
+	}
+
+	static inline Basis _blend_basis(const Basis &a, const Basis &b, const real_t &weight) {
+		return a.lerp(b, weight);
+	}
+
+	static inline Environment::BGMode _blend_bg_mode(const Environment::BGMode& a, const Environment::BGMode& b, const real_t& weight)
+	{
+		return weight > 0.5 ? b : a;
+	}
+
+public:
+
+	static Ref<Environment> blend_environments(const Ref<Environment> p_from, const Ref<Environment> p_other, const real_t &weight)
+	{
+		Environment new_env = Environment();
+		
+		// Background
+		new_env.set_background(Environment::BGMode(_blend_bg_mode(p_from->get_background(), p_other->get_background(), weight)));
+		
+		return &new_env;
+	}
+};
+
+
 
 #endif // ENVIRONMENT_H
